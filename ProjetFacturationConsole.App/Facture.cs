@@ -22,5 +22,33 @@ namespace ProjetFacturationConsole.App
             Entreprise = entreprise;
             Client = client;
         }
+
+        public void AfficherFacture()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("# FACTURE");
+            sb.AppendLine($"Numéro: {Numero}");
+            sb.AppendLine($"Date d'émission : {DateEmission:dd/MM/yyyy}");
+            sb.AppendLine($"Date d'échéance : {DateEcheance:dd/MM/yyyy}");
+            sb.AppendLine($"Statut : {Statut}");
+            sb.AppendLine("\nEntreprise :");
+            Entreprise.AfficherInfos();
+            sb.AppendLine("\nClient :");
+            Client.AfficherInfos();
+            sb.AppendLine("\nLignes :");
+
+            int i = 1;
+            foreach (var ligne in Lignes)
+            {
+                sb.AppendLine($"{i}. {ligne.Description} - Qte : {ligne.Quantite} - PU HT : {ligne.PrixUnitaireHT} - TVA : {ligne.TauxTVA} - Total HT : {ligne.CalculerTotalHT()} - Total TTC : {ligne.CalculerTotalTTC()}");
+                i++;
+            }
+
+            sb.AppendLine($"\nTotal HT : {CalculerTotalHT()}");
+            sb.AppendLine($"Total TVA: {CalculerTotalTVA()}");
+            sb.AppendLine($"Total TTC: {CalculerTotalTTC()}");
+
+            Console.WriteLine(sb.ToString());
+        }
     }
 }

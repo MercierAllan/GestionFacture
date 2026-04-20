@@ -23,5 +23,7 @@ namespace ProjetFacturationConsole.App
             Ville = ville;
             CodePostal = codePostal;
         }
+
+        public abstract void AfficherInfos();
     }
 }

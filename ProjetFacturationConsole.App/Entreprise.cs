@@ -12,5 +12,10 @@ namespace ProjetFacturationConsole.App
         {
             Siret = siret;
         }
+
+        public override void AfficherInfos()
+        {
+            Console.WriteLine($"{Id} - {Nom} - {Email} - {Telephone} - {Adresse} - {Ville} - {CodePostal} - {Siret}");
+        }
     }
 }
