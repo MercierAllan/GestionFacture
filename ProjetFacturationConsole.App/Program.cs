@@ -1,9 +1,13 @@
-﻿namespace ProjetFacturationConsole.App;
+﻿// Program.cs
+using System;
 
-class Program
+namespace ProjetFacturationConsole.App
 {
-    static void Main(string[] args)
+    class Program
     {
-        Console.WriteLine("Hello, World!");
+        static void Main(string[] args)
+        {
+            GestionFacturation gestionFacturation = new GestionFacturation();
+        }
     }
 }
