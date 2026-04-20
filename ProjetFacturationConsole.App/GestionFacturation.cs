@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 
 namespace ProjetFacturationConsole.App
@@ -202,10 +203,100 @@ namespace ProjetFacturationConsole.App
 
         public void CreerFacture()
         {
+            if (Clients.Count == 0)
+            {
+                ChargerClientsDepuisJson();
+            }
+            if (Entreprises.Count == 0)
+            {
+                ChargerEntreprisesDepuisJson();
+            }
+
+            Console.WriteLine("Liste des entreprises : ");
+            foreach (var entrepriseAffichee in Entreprises)
+            {
+                Console.WriteLine($"{entrepriseAffichee.Id} - {entrepriseAffichee.Nom}");
+            }
+
+            Console.Write("Entrez l'ID de l'entreprise : ");
+            int idEntreprise = int.Parse(Console.ReadLine());
+            Entreprise entreprise = DictionnaireEntreprises[idEntreprise];
+
+            Console.WriteLine("Liste des clients : ");
+            foreach (var clientAffiche in Clients)
+            {
+                Console.WriteLine($"{clientAffiche.Id} - {clientAffiche.Nom}");
+            }
+
+            Console.Write("Entrez l'ID du client : ");
+            int idClient = int.Parse(Console.ReadLine());
+            Client client = DictionnaireClients[idClient];
+
+            Console.Write("Date d'émission (dd/MM/yyyy) : ");
+            DateTime dateEmission = DateTime.ParseExact(Console.ReadLine(), "dd/MM/yyyy", null);
+
+            Facture facture = new Facture($"F{DateTime.Now.Year})-{Guid.NewGuid().ToString().Substring(0, 3).ToUpper()}", dateEmission, entreprise, client);
+
+            bool ajouterLigne = true;
+            while (ajouterLigne)            {
+                Console.Write("Description de la ligne : ");
+                string description = Console.ReadLine();
+
+                Console.Write("Quantité : ");
+                int quantite = int.Parse(Console.ReadLine());
+
+                Console.Write("Prix unitaire HT : ");
+                decimal prixUnitaireHT = decimal.Parse(Console.ReadLine());
+
+                Console.Write("Taux de TVA (%) : ");
+                decimal tauxTVA = decimal.Parse(Console.ReadLine());
+
+                LigneFacture ligne = new LigneFacture(description, quantite, prixUnitaireHT, tauxTVA);
+                facture.AjouterLigne(ligne);
+
+                Console.Write("Ajouter une autre ligne ? (oui/non) : ");
+                ajouterLigne = Console.ReadLine().ToLower() == "oui";
+            }
+
+            facture.AfficherFacture();
+
+            Console.Write("Confirmer la génération de la facture ? (oui/non) : ");
+            if (Console.ReadLine().ToLower() == "oui")
+            {
+                GenererFichierTexteFacture(facture);
+                Console.WriteLine("Facture générée avec succès !");
+            }
+
         }
 
         public void GenererFichierTexteFacture(Facture facture)
         {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("# FACTURE");
+            sb.AppendLine($"Numéro: {facture.Numero}");
+            sb.AppendLine($"Date d'émission : {facture.DateEmission:dd/MM/yyyy}");
+            sb.AppendLine($"Date d'échéance : {facture.DateEcheance:dd/MM/yyyy}");
+            sb.AppendLine($"Statut : {facture.Statut}");
+            sb.AppendLine("\nEntreprise :");
+            sb.AppendLine($"{facture.Entreprise.Id} - {facture.Entreprise.Nom} - {facture.Entreprise.Email} - {facture.Entreprise.Telephone} - {facture.Entreprise.Adresse} - {facture.Entreprise.Ville} - {facture.Entreprise.CodePostal} - {facture.Entreprise.Siret}");
+            sb.AppendLine("\nClient :");
+            sb.AppendLine($"{facture.Client.Id} - {facture.Client.Nom} - {facture.Client.Email} - {facture.Client.Telephone} - {facture.Client.Adresse} - {facture.Client.Ville} - {facture.Client.CodePostal} - {facture.Client.DateInscription:dd/MM/yyyy}");
+            sb.AppendLine("\nLignes :");
+
+            int i = 1;
+            foreach (var ligne in facture.Lignes)
+            {
+                sb.AppendLine($"{i}. {ligne.Description} - Qte : {ligne.Quantite} - PU HT : {ligne.PrixUnitaireHT} - TVA : {ligne.TauxTVA} - Total HT : {ligne.CalculerTotalHT()} - Total TTC : {ligne.CalculerTotalTTC()}");
+                i++;
+            }
+
+            sb.AppendLine($"\nTotal HT : {facture.CalculerTotalHT()}");
+            sb.AppendLine($"Total TVA: {facture.CalculerTotalTVA()}");
+            sb.AppendLine($"Total TTC: {facture.CalculerTotalTTC()}");
+
+            string nomFichier = $"Facture_{facture.Numero}.txt";
+            File.WriteAllText(nomFichier, sb.ToString());
+            Console.WriteLine($"Fichier {nomFichier} généré avec succès");
         }
 
         public void AfficherCarnetContacts()
