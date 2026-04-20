@@ -64,7 +64,7 @@ namespace ProjetFacturationConsole.App
             string cheminFichier = "clients.csv";
             if (!File.Exists(cheminFichier))
         {
-            Console.WriteLine("Le fichier clients.csv n'existe pas.");
+            Console.WriteLine("Le fichier clients.csv n'existe pas");
             return;
         }
 
@@ -95,16 +95,16 @@ namespace ProjetFacturationConsole.App
 
         string json = JsonSerializer.Serialize(Clients, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText("clients.json", json);
-        Console.WriteLine("Import des clients terminé et clients.json généré.");
+        Console.WriteLine("Import des clients terminé et clients.json généré");
         }
-        
+
         // Fait différamment car sinon problème avec le code Microsoft.
         public void ImporterEntreprisesDepuisCsv()
         {
             string cheminFichier = "entreprises.csv";
         if (!File.Exists(cheminFichier))
         {
-            Console.WriteLine("Le fichier entreprises.csv n'existe pas.");
+            Console.WriteLine("Le fichier entreprises.csv n'existe pas");
             return;
         }
 
@@ -135,23 +135,69 @@ namespace ProjetFacturationConsole.App
 
         string json = JsonSerializer.Serialize(Entreprises, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText("entreprises.json", json);
-        Console.WriteLine("Import des entreprises terminé et entreprises.json généré.");
+        Console.WriteLine("Import des entreprises terminé et entreprises.json généré");
         }
 
         public void ChargerClientsDepuisJson()
         {
+            string cheminFichier = "clients.json";
+        if (!File.Exists(cheminFichier))
+        {
+            Console.WriteLine("Le fichier clients.json n'existe pas");
+            return;
+        }
+        
+        string json = File.ReadAllText(cheminFichier);
+        Clients = JsonSerializer.Deserialize<List<Client>>(json);
+        DictionnaireClients.Clear();
+        foreach (var client in Clients)
+        {
+            DictionnaireClients.Add(client.Id, client);
+        }
         }
 
         public void ChargerEntreprisesDepuisJson()
         {
+            string cheminFichier = "entreprises.json";
+        if (!File.Exists(cheminFichier))
+        {
+            Console.WriteLine("Le fichier entreprises.json n'existe pas");
+            return;
+        }
+        
+        string json = File.ReadAllText(cheminFichier);
+        Entreprises = JsonSerializer.Deserialize<List<Entreprise>>(json);
+        DictionnaireEntreprises.Clear();
+        foreach (var entreprise in Entreprises)
+        {
+            DictionnaireEntreprises.Add(entreprise.Id, entreprise);
+        }
         }
 
         public void AfficherClients()
         {
+            if (Clients.Count == 0)
+            {
+                ChargerClientsDepuisJson();
+            }
+            Console.WriteLine("Liste des Clients : ");
+            foreach (var client in Clients)
+            {
+                Console.WriteLine($"{client.Id} - {client.Nom} - {client.Email} - {client.Telephone} - {client.Adresse} - {client.Ville} - {client.CodePostal} - {client.DateInscription:dd/MM/yyyy}");
+            }
         }
 
         public void AfficherEntreprises()
         {
+            if (Entreprises.Count == 0)
+            {
+                ChargerEntreprisesDepuisJson();
+            }
+            Console.WriteLine("Liste des Entreprises : ");
+            foreach (var entreprise in Entreprises)
+            {
+                Console.WriteLine($"{entreprise.Id} - {entreprise.Nom} - {entreprise.Email} - {entreprise.Telephone} - {entreprise.Adresse} - {entreprise.Ville} - {entreprise.CodePostal} - {entreprise.Siret}");
+            }
         }
 
         public void CreerFacture()
