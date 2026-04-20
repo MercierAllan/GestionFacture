@@ -1,4 +1,3 @@
-// Facture.cs
 using System;
 using System.Text;
 

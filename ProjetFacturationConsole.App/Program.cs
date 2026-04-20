@@ -1,5 +1,4 @@
-﻿// Program.cs
-using System;
+﻿using System;
 
 namespace ProjetFacturationConsole.App
 {

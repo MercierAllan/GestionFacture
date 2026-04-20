@@ -1,4 +1,3 @@
-// Client.cs
 using System;
 
 namespace ProjetFacturationConsole.App

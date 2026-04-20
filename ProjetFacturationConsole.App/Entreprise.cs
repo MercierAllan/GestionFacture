@@ -1,4 +1,3 @@
-// Entreprise.cs
 using System;
 
 namespace ProjetFacturationConsole.App

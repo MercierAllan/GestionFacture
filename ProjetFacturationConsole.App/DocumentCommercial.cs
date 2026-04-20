@@ -1,4 +1,3 @@
-// DocumentCommercial.cs
 using System.Collections.Generic;
 
 namespace ProjetFacturationConsole.App

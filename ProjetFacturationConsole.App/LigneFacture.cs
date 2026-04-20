@@ -1,4 +1,3 @@
-// LigneFacture.cs
 namespace ProjetFacturationConsole.App
 {
     public class LigneFacture
